@@ -1,6 +1,6 @@
-# from utils import questions, tags
 from regist import Registration
 from ner_service import NerDetect
+from constants import *
 
 class Session:
     
@@ -69,11 +69,11 @@ class Session:
             self.sound_handler.play_sound("credit_due.wav")
 
     def process_regist(self):
-        pass
-        # ner = NerDetect()
-        # regist = Registration(self.sound_handler, ner, questions, tas)
-        # out = Registration.process()
-        # return out
+        # pass
+        ner = NerDetect()
+        regist = Registration(self.sound_handler, ner, questions, tags)
+        out = Registration.process()
+        return out
 
     def process_unknown(self):
         #say that not understand the answer and ask if need to connect with person
