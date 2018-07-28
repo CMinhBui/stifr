@@ -53,18 +53,12 @@ class Session:
 
         if self.loggin_state:
             #if logged in, ask what card user need to lock
-            self.sound_handler.play_sound("ask_card.wav")
-            response = self.sound_handler.recognize()
-            # keyword = self._extract_keyword_lockcard(response)
-            # TODO
-            keyword = "credit"
-            if keyword == "debit":
-                self.sound_handler.play_sound("lock_debit.wav")
-            elif keyword == "credit":
-                self.sound_handler.play_sound("lock_credit.wav")
-            elif keyword == "atm":
-                self.sound_handler.play_sound("lock_atm.wav")
-            else:
+            self.sound_handler.play_sound("ask_lock.wav")
+            response = self.sound_handler.recognize().lower()
+            
+            if "tín dụng" in response or "credit" in response or "ghi nợ" in response or "debit" in response or "atm" in response:
+                self.sound_handler.play_sound("lock_success.wav")
+            else:                
                 is_done = self.process_unknown()
 
         return is_done
@@ -112,6 +106,7 @@ class Session:
 
     def loggin(self):
         self.sound_handler.play_sound("require_login.wav")
+        self.sound_handler.play_sound("voice_verify.wav")
         audio_data = self.sound_handler.start_record()
         
         # result = self.verifier.verify(self.phone_num, audio_data)

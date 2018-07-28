@@ -19,19 +19,20 @@ class Registration:
 	def fill_form (self, text, questions, tags):
 		is_done = False
 		information = {}
+		text = text.lower()
 
-		if ('tín dụng' in text):
+		if ('tín dụng' in text or 'credit' in text):
 			self.sound_handler.play_sound('regist_credit.wav')
 			text = self.sound_handler.recognize()
 			
-			intent = self.intent_classifier.classify(text)
-			yesno_answer = self.yesno_classifier.classify(text)
+			intent = self.session.intent_classifier.classify(text)
+			yesno_answer = self.session.yesno_classifier.classify(text)
 			
 			if(intent == "call_person" or yesno_answer == "yes"):
 				self.session.process_call()
 				is_done = True
 
-		elif ('ghi nợ' in text):
+		elif ('ghi nợ' in text or 'debit' in text):
 
 			n = len(questions)
 			i = 0
@@ -75,10 +76,10 @@ class Registration:
 		return out, is_done
 
 if __name__ == '__main__':
-	session = Session()
-	sound_handler = SoundHandeler()
-	ner = NerDetect()
-	regist = Registration(sound_handler, ner, questions, tags, session)
-	out = regist.process()
-	print(out)
+	# session = Session()
+	# sound_handler = SoundHandeler()
+	# ner = NerDetect()
+	# regist = Registration(sound_handler, ner, questions, tags, session)
+	# out = regist.process()
+	# print(out)
 

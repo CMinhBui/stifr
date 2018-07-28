@@ -8,7 +8,7 @@ from fake_answers import FAKE_ANSWER
 
 class SoundHandler:
 
-    def __init__(self, stop_delay=75):
+    def __init__(self, stop_delay=75, resource_dir="resources"):
         self.is_recording = False
         self.data_buffer = []
         self.vad = webrtcvad.Vad()
@@ -21,6 +21,7 @@ class SoundHandler:
         self.client = AudioRecog.initEnv()
         self.is_speech_start = False
         self.continuos_speech_count = 0
+        self.resource_dir = resource_dir
     
     def _callback(self, in_data, frame_count, time_info, status):
         if(self.is_recording):
@@ -108,24 +109,25 @@ class SoundHandler:
         return ' '.join(transcripts)
         
 
-    def play_sound(self, filepath):
-        print('\n' + FAKE_ANSWER[filepath] + '\n')
-        # sound_wave = wave.open(filepath, 'rb')
-        # data = sound_wave.readframes(sound_wave.getnframes())
-        # self.stream_out.write(data)
+    def play_sound(self, filename):
+        # print('\n' + FAKE_ANSWER[filepath] + '\n')
+        sound_wave = wave.open(self.resource_dir + "/" + filename, 'rb')
+        data = sound_wave.readframes(sound_wave.getnframes())
+        self.stream_out.write(data)
 
 if __name__ == "__main__":
     tmp = SoundHandler()
     tmp.start()
-    data = tmp.start_record()
-    with wave.open("data.wav", 'wb') as file:
-        file.setnchannels(1)
-        file.setsampwidth(2)
-        file.setframerate(16000)
+    # data = tmp.start_record()
+    # with wave.open("data.wav", 'wb') as file:
+    #     file.setnchannels(1)
+    #     file.setsampwidth(2)
+    #     file.setframerate(16000)
 
-        file.writeframes(data)
+    #     file.writeframes(data)
 
-    transcripts = AudioRecog.recognize(tmp.client, data)
-    transcripts = map(lambda x: x.strip(), transcripts)
-    print(' '.join(transcripts))
+    # transcripts = AudioRecog.recognize(tmp.client, data)
+    # transcripts = map(lambda x: x.strip(), transcripts)
+    # print(' '.join(transcripts))
+    tmp.play_sound("ask_phone.wav")
     tmp.end()
