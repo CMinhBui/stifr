@@ -1,3 +1,4 @@
+# from utils import questions, tags
 from regist import Registration
 from ner_service import NerDetect
 from constants import *
@@ -20,24 +21,31 @@ class Session:
         while(True):
             print(intent)
             if intent == "lock":
-                self.process_lock()
+                is_done = self.process_lock()
+            
             elif intent == "credit_due":
                 self.process_credit_due()
+
             elif intent == "registration":
-                process = self.process_regist()
-                if (process == False):
-                    break
+                is_done = self.process_regist()
+            
             elif intent == "call_person":
                 self.process_call()
                 break
+            
             else:
                 is_done = self.process_unknown()
+
+            if(is_done):
+                break
 
             intent, is_done = self.ask_again()
             if(is_done):
                 break
 
     def process_lock(self):
+        is_done = False
+
         if(not self.database.has_phone_num(self.phone_num)):
             self.sound_handler.play_sound("num_not_exist.wav")
         elif not self.loggin_state:
@@ -57,7 +65,9 @@ class Session:
             elif keyword == "atm":
                 self.sound_handler.play_sound("lock_atm.wav")
             else:
-                self.process_unknown()
+                is_done = self.process_unknown()
+
+        return is_done
 
     def process_credit_due(self):
         if(not self.database.has_phone_num(self.phone_num)):
@@ -69,11 +79,12 @@ class Session:
             self.sound_handler.play_sound("credit_due.wav")
 
     def process_regist(self):
-        # pass
         ner = NerDetect()
-        regist = Registration(self.sound_handler, ner, questions, tags)
-        out = Registration.process()
-        return out
+        regist = Registration(self.sound_handler, ner, QUESTIONS, TAGS, self)
+        information, is_done = regist.process()
+        print(information)
+
+        return is_done
 
     def process_unknown(self):
         #say that not understand the answer and ask if need to connect with person
@@ -120,8 +131,6 @@ class Session:
             yesno_answer = self.yesno_classifier.classify(text)
             if yesno_answer == "no":
                 is_done = True
-            else:
-                self.process_unknown()
 
         return intent, is_done
         

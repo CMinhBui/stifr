@@ -4,10 +4,11 @@ from constants import CHUNK_SIZE, FORMAT, RATE
 import os
 import wave
 import AudioRecog
+from fake_answers import FAKE_ANSWER
 
 class SoundHandler:
 
-    def __init__(self, stop_delay=100):
+    def __init__(self, stop_delay=75):
         self.is_recording = False
         self.data_buffer = []
         self.vad = webrtcvad.Vad()
@@ -37,7 +38,6 @@ class SoundHandler:
                     if self.is_speech_start:
                         self.silent_count += 1
                         
-
             except:
                 print(in_data)
                 raise
@@ -92,7 +92,12 @@ class SoundHandler:
         if(len(self.data_buffer) > 0):
             result = self.data_buffer
             self.data_buffer = []
-        
+            start_at = 0
+            while(not self.vad.is_speech(result[start_at], RATE)):
+                start_at += 1
+            end_at = len(result) - 50
+            result = result[start_at-1:end_at]
+
         result = b''.join(result)
         return result
 
@@ -101,9 +106,10 @@ class SoundHandler:
         transcripts = AudioRecog.recognize(self.client, data)
         transcripts = map(lambda x: x.strip(), transcripts)
         return ' '.join(transcripts)
+        
 
     def play_sound(self, filepath):
-        print("Play {}".format(filepath))
+        print('\n' + FAKE_ANSWER[filepath] + '\n')
         # sound_wave = wave.open(filepath, 'rb')
         # data = sound_wave.readframes(sound_wave.getnframes())
         # self.stream_out.write(data)
@@ -111,5 +117,15 @@ class SoundHandler:
 if __name__ == "__main__":
     tmp = SoundHandler()
     tmp.start()
-    print(tmp.recognize())
+    data = tmp.start_record()
+    with wave.open("data.wav", 'wb') as file:
+        file.setnchannels(1)
+        file.setsampwidth(2)
+        file.setframerate(16000)
+
+        file.writeframes(data)
+
+    transcripts = AudioRecog.recognize(tmp.client, data)
+    transcripts = map(lambda x: x.strip(), transcripts)
+    print(' '.join(transcripts))
     tmp.end()

@@ -1,84 +1,84 @@
 import pandas as pd
 from constants import *
-from sound_handler import SoundHandeler
+from sound_handler import SoundHandler
 from ner_service import NerDetect
 
 
 class Registration:
-	def __init__(self, sound_handler, ner, questions, tags):
+	def __init__(self, sound_handler, ner, questions, tags, session):
 		self.sound_handler = sound_handler
 		self.ner = ner
 		self.questions = questions
 		self.tags = tags
+		self.session = session
 	
-	# def __init__(self, ner, questions, tags):
-	# 	self.ner = ner
-	# 	self.questions = questions
-	# 	self.tags = tags
-
-	def answer (self, file):
-		self.sound_handler.play_sound(file + '.wav')
-		# print(file)
 
 	def getInfo(self, text, tag):
-		return ner.request_ner(text, tag)
+		return self.ner.request_ner(text, tag)
 
-	def fill_form (self, text, questions, tags, num):
+	def fill_form (self, text, questions, tags):
+		is_done = False
+		information = {}
+
 		if ('tín dụng' in text):
-			self.answer('employee')
-			return False
+			self.sound_handler.play_sound('regist_credit.wav')
+			text = self.sound_handler.recognize()
+			
+			intent = self.intent_classifier.classify(text)
+			yesno_answer = self.yesno_classifier.classify(text)
+			
+			if(intent == "call_person" or yesno_answer == "yes"):
+				self.session.process_call()
+				is_done = True
+
 		elif ('ghi nợ' in text):
-			count = 0
+
 			n = len(questions)
 			i = 0
-			infomation = []
 			while i < n:
+				count = 0
 				ques = questions[i]
 				tag = tags[i]
-				self.answer(ques)
+				self.sound_handler.play_sound('ask_' + ques + '.wav')
 				text_received = self.sound_handler.recognize()
-				# text_received = input('recognize : ')
 				info = self.getInfo(text_received, tag)
-				if (len(info) == 0):
+				while(len(info) == 0 and count < 2):
+					self.sound_handler.play_sound('reask_' + ques + '.wav')
+					text_received = self.sound_handler.recognize()
+					info = self.getInfo(text_received, tag)
 					count += 1
-					if (count == 5):
-						self.answer('employee')
-						return False
-					continue
-				else:
+
+				if(len(info) > 0):
 					i += 1
-					infomation.append(info)
+					information[ques] = info[0]
+				else:
+					is_done = self.session.process_unknown()
+					break
+
+			if(len(information) == 3):
+				self.sound_handler.play_sound("filled_form.wav")
 			
-			print(infomation)
-			self.answer('ending')
-			return True
-		else:
-			num += 1
-			if (num == 5):
-				self.answer('employee')
-				return False
-			self.answer('advise')
-			text_received = self.sound_handler.recognize()
-			# text_received = input('recognize : ')
-			return self.fill_form(text_received, questions, tags, num)
+		return information, is_done
 
 	def process(self):
-		self.answer('card')
+		self.sound_handler.play_sound("regist_card.wav")
 		text = self.sound_handler.recognize()
-		# text = input('recognize : ')
+		
+		is_done = False
+		out = None
+		
 		if ('tín dụng' in text) or ('ghi nợ' in text):
-			out = self.fill_form(text, self.questions, self.tags, 0)
+			out, is_done = self.fill_form(text, self.questions, self.tags)
 		else:
-			self.answer('advise')
-			text = self.sound_handler.recognize()
-			# text = input('recognize : ')
-			out = self.fill_form(text, self.questions, self.tags, 0)
-		return out
+			is_done = self.session.process_unknown()
+		
+		return out, is_done
 
 if __name__ == '__main__':
-	# sound_handler = SoundHandeler()
+	session = Session()
+	sound_handler = SoundHandeler()
 	ner = NerDetect()
-	regist = Registration(ner, questions, tags)
+	regist = Registration(sound_handler, ner, questions, tags, session)
 	out = regist.process()
 	print(out)
 

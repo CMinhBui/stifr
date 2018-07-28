@@ -6,5 +6,5 @@ RATE = 16000
 FORMAT = pyaudio.paInt16
 
 PATH_TO_QUESTION = 'source/registration/'
-questions = ['name', 'phone', 'idcard', 'email', 'location']
-tags = ['PER', 'NUM', 'NUM', 'EMAIL', 'LOC']
+QUESTIONS = ['name', 'phone', 'idcard']
+TAGS = ['PER', 'NUM', 'NUM']
