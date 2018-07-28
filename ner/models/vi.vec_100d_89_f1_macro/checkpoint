@@ -1,2 +1,0 @@
-model_checkpoint_path: "/data/ner/models/11-11-2017_22-26-28/entity_lstm"
-all_model_checkpoint_paths: "/data/ner/models/11-11-2017_22-26-28/entity_lstm"
