@@ -52,7 +52,13 @@ class Session:
                 self.process_unknown()
 
     def process_credit_due(self):
-        pass
+        if(not self.database.has_phone_num(self.phone_num)):
+            self.sound_handler.play_sound("num_not_exist.wav")
+        elif not self.loggin_state:
+            self.loggin()
+
+        if self.loggin_state:
+            self.sound_handler.play_sound("credit_due.wav")
 
     def process_regist(self):
         pass
