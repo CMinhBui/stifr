@@ -69,7 +69,7 @@ class Session:
     def process_regist(self):
         ner = NerDetect()
         regist = Registration(self.sound_handler, ner, questions, tas)
-        out = Registration.process
+        out = Registration.process()
         return out
 
     def process_unknown(self):

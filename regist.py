@@ -11,7 +11,7 @@ class Registration:
 		print(file)
 		self.sound_handler.play_sound(file + '.wav')
 
-	def getInfo(text, tag):
+	def getInfo(self, text, tag):
 		return ner.request_ner(text, tag)
 
 	def fill_form (self, text, questions, tags, num):
@@ -47,7 +47,7 @@ class Registration:
 			text_received = self.sound_handler.recognize()
 			return fill_form(text_received, questions, tags, num)
 
-	def process():
+	def process(self):
 		answer('card')
 		text = self.sound_handler.recognize()
 		if ('tín dụng' in text) or ('ghi nợ' in text):
