@@ -129,5 +129,5 @@ if __name__ == "__main__":
     # transcripts = AudioRecog.recognize(tmp.client, data)
     # transcripts = map(lambda x: x.strip(), transcripts)
     # print(' '.join(transcripts))
-    tmp.play_sound("ask_phone.wav")
+    tmp.play_sound("calling_person.wav")
     tmp.end()
