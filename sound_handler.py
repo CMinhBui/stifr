@@ -24,7 +24,7 @@ class SoundHandler:
     def _callback(self, in_data, frame_count, time_info, status):
         if(self.is_recording):
             self.data_buffer.append(in_data)
-            print(self.silent_count)
+            # print(self.silent_count)
             try:
                 if(self.vad.is_speech(in_data, RATE)):
                     self.continuos_speech_count += 1
@@ -99,7 +99,8 @@ class SoundHandler:
     def recognize(self):
         data = self.start_record()
         transcripts = AudioRecog.recognize(self.client, data)
-        return transcripts[0]
+        transcripts = map(lambda x: x.strip(), transcripts)
+        return ' '.join(transcripts)
 
     def play_sound(self, filepath):
         sound_wave = wave.open(filepath, 'rb')
@@ -109,5 +110,5 @@ class SoundHandler:
 if __name__ == "__main__":
     tmp = SoundHandler()
     tmp.start()
-    tmp.start_record()
+    print(tmp.recognize())
     tmp.end()

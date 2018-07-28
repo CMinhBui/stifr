@@ -14,5 +14,5 @@ class YesNoClassifier:
         return res.text
 
 if __name__ == "__main__":
-    classifier = IntentionClassifier()
-    print(classifier.classify('tớ muốn đăng ký thẻ'))
+    classifier = IntentClassifier()
+    print(classifier.classify('tớ    muốn đăng    ký    thẻ'))
