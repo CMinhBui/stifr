@@ -14,5 +14,7 @@ class YesNoClassifier:
         return res.text
 
 if __name__ == "__main__":
-    classifier = IntentClassifier()
-    print(classifier.classify('tớ    muốn đăng    ký    thẻ'))
+    intentclassifier = IntentClassifier()
+    print(intentclassifier.classify('mình muốn khóa thẻ'))
+    yesnoclassifier = YesNoClassifier()
+    print(yesnoclassifier.classify('tớ có'))

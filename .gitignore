@@ -1,1 +1,3 @@
 *.pyc
+ner/*
+__pycache__/*

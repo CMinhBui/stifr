@@ -103,9 +103,10 @@ class SoundHandler:
         return ' '.join(transcripts)
 
     def play_sound(self, filepath):
-        sound_wave = wave.open(filepath, 'rb')
-        data = sound_wave.readframes(sound_wave.getnframes())
-        self.stream_out.write(data)
+        print("Play {}".format(filepath))
+        # sound_wave = wave.open(filepath, 'rb')
+        # data = sound_wave.readframes(sound_wave.getnframes())
+        # self.stream_out.write(data)
 
 if __name__ == "__main__":
     tmp = SoundHandler()

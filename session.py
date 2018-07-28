@@ -1,4 +1,4 @@
-from utils import questions, tags
+# from utils import questions, tags
 from regist import Registration
 from ner_service import NerDetect
 
@@ -18,6 +18,7 @@ class Session:
         is_done = False
         
         while(True):
+            print(intent)
             if intent == "lock":
                 self.process_lock()
             elif intent == "credit_due":
@@ -46,8 +47,9 @@ class Session:
             #if logged in, ask what card user need to lock
             self.sound_handler.play_sound("ask_card.wav")
             response = self.sound_handler.recognize()
-            keyword = self._extract_keyword_lockcard(response)
-
+            # keyword = self._extract_keyword_lockcard(response)
+            # TODO
+            keyword = "credit"
             if keyword == "debit":
                 self.sound_handler.play_sound("lock_debit.wav")
             elif keyword == "credit":
@@ -67,10 +69,11 @@ class Session:
             self.sound_handler.play_sound("credit_due.wav")
 
     def process_regist(self):
-        ner = NerDetect()
-        regist = Registration(self.sound_handler, ner, questions, tas)
-        out = Registration.process()
-        return out
+        pass
+        # ner = NerDetect()
+        # regist = Registration(self.sound_handler, ner, questions, tas)
+        # out = Registration.process()
+        # return out
 
     def process_unknown(self):
         #say that not understand the answer and ask if need to connect with person
@@ -78,11 +81,16 @@ class Session:
         text = self.sound_handler.recognize()
         intent = self.intent_classifier.classify(text)
         yesno_answer = self.yesno_classifier.classify(text)
+        is_done = False
         
         if(intent == "call_person" or yesno_answer == "yes"):
             self.process_call()
+            is_done = True
 
         return is_done
+
+    def process_call(self):
+        self.sound_handler.play_sound("calling_person.wav")
 
     def hello(self):
         self.sound_handler.play_sound("hello.wav")
@@ -93,8 +101,10 @@ class Session:
 
     def loggin(self):
         self.sound_handler.play_sound("require_login.wav")
-        audio_data = self.sound_handler.record_sound()
-        result = self.verifier.verify(self.phone_num, audio_data)
+        audio_data = self.sound_handler.start_record()
+        
+        # result = self.verifier.verify(self.phone_num, audio_data)
+        result = True
         if result:
             self.loggin_state = True
         else:
@@ -106,8 +116,8 @@ class Session:
         is_done = False
 
         intent = self.intent_classifier.classify(text)
-        if intent = "unknow":
-            yesno_answer = self.yesno_classifier(text)
+        if intent == "unknown":
+            yesno_answer = self.yesno_classifier.classify(text)
             if yesno_answer == "no":
                 is_done = True
             else:
