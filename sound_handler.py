@@ -11,22 +11,24 @@ class SoundHandler:
         self.is_recording = False
         self.data_buffer = []
         self.vad = webrtcvad.Vad()
-        self.vad.set_mode(1)
+        self.vad.set_mode(3)
         self.p = None
         self.stream = None
         self.stop_delay = stop_delay
         self.silent_count = 0
         self.stream_out = None
         self.client = AudioRecog.initEnv()
+        self.is_speech_start = False
     
     def _callback(self, in_data, frame_count, time_info, status):
         if(self.is_recording):
             self.data_buffer.append(in_data)
-            # print(self.silent_count)
+            print(self.silent_count)
             try:
                 if(self.vad.is_speech(in_data, RATE)):
                     self.silent_count = 0
-                else:
+                    self.is_speech_start = True
+                elif(self.is_speech_start):
                     self.silent_count += 1
 
             except:
@@ -35,6 +37,7 @@ class SoundHandler:
 
             if(self.silent_count > self.stop_delay):
                 self.is_recording = False
+                self.is_speech_start = False
                 self.silent_count = 0
         
         return (in_data, pyaudio.paContinue)
@@ -99,5 +102,5 @@ class SoundHandler:
 if __name__ == "__main__":
     tmp = SoundHandler()
     tmp.start()
-    print(tmp.recognize())
+    tmp.start_record()
     tmp.end()
