@@ -1,23 +1,16 @@
-# -*- coding: utf-8 -*-
-from AudioRecog import *
-from Record import *
-import fastText
-import time
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
-if __name__ == "__main__":
-    model = fastText.load_model('intent.bin')
-    client = initEnv()
-    data = record_to_file('demo.wav')
-    print("done - result is loading to recognize")
-    start = time.time()
-    transcripts = recognize(client, data)
-    end = time.time()
-    print(end-start)
-    start = end
-    intent = model.predict(transcripts[0])
-    print(u"Ý định của bạn là  {}".format(intent[0][0][9:]))
-    end = time.time()
-    print(end-start)
+from intent_service import YesNoClassifier, IntentClassifier
+from sound_hander import SoundHandler
+from verify_service import Verifier
+from ner_serv
+import speechapi
+from db.py import Database
+from session import Session()
+ intent_classifier = IntentClassifier()
+yesno_classifier = YesNoClassifier()
+sound_handler = SoundHandler()
+verifier = Verifier()
+db = Database()
+ while(True):
+    phone_num = input("Phone number: ")
+    sess = Session(phone_num, intent_classifier, yesno_classifier, sound_handler, verifier, db)
+    sess.run()
