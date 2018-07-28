@@ -1,3 +1,7 @@
+from ner_service import NER 
+from utils import questions, tags
+from regist import Registration
+
 class Session:
     
     def __init__(self, phone_num, intent_classifier, yesno_classifier, sound_handler, verifier, database):
@@ -19,7 +23,9 @@ class Session:
             elif intent == "credit_due":
                 self.process_credit_due()
             elif intent == "registration":
-                self.process_regist()
+                process = self.process_regist()
+                if (process == False):
+                    break
             elif intent == "call_person":
                 self.process_call()
                 break
@@ -61,9 +67,10 @@ class Session:
             self.sound_handler.play_sound("credit_due.wav")
 
     def process_regist(self):
-        pass
-        
-                
+        ner = NER()
+        regist = Registration(self.sound_handler, ner, questions, tas)
+        out = Registration.main()
+        return out
 
     def process_unknown(self):
         #say that not understand the answer and ask if need to connect with person
