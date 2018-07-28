@@ -3,7 +3,7 @@ import json
 
 URL = 'http://localhost:1207/'
 
-class NER:
+class NerDetect:
 	def request_ner(self, text, tag):
 		res = requests.post(URL, json={'text' : text})
 		listNer = json.loads(res.text)
@@ -15,6 +15,6 @@ class NER:
 
 
 if __name__ == '__main__':
-	ner = NER()
+	ner = NerDetect()
 	txt = (ner.request_ner('Tao ở Hà Nội , và mới chuyển qua Hồ Chí Minh. à tiện tao tên là Nguyễn Huy Tuyển', 'PER'))
 	print(txt)

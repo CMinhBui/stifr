@@ -1,12 +1,11 @@
 from intent_service import YesNoClassifier, IntentClassifier
 from sound_hander import SoundHandler
 from verify_service import Verifier
-from ner_serv
 import speechapi
 from db import Database
 from session import Session
 
- intent_classifier = IntentClassifier()
+intent_classifier = IntentClassifier()
 yesno_classifier = YesNoClassifier()
 sound_handler = SoundHandler()
 verifier = Verifier()

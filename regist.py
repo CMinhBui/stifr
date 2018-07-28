@@ -47,17 +47,16 @@ class Registration:
 			text_received = self.sound_handler.recognize()
 			return fill_form(text_received, questions, tags, num)
 
-	def main():
-		while True:
-			answer('card')
+	def process():
+		answer('card')
+		text = self.sound_handler.recognize()
+		if ('tín dụng' in text) or ('ghi nợ' in text):
+			out = fill_form(text, self.questions, self.tags, 0)
+		else:
+			answer('advise')
 			text = self.sound_handler.recognize()
-			if ('tín dụng' in text) or ('ghi nợ' in text):
-				out = fill_form(text, self.questions, self.tags, 0)
-			else:
-				answer('advise')
-				text = self.sound_handler.recognize()
-				out = fill_form(text, self.questions, self.tags, 0)
-			return out
+			out = fill_form(text, self.questions, self.tags, 0)
+		return out
 
 
 
