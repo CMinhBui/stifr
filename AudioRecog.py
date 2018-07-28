@@ -4,10 +4,10 @@ from google.cloud.speech import types
 import os
 import io
 
-GOOGLE_APPLICATION_CREDENTIALS="/home/lego1st/Documents/Contests/VPBank18/SpeechToText/service-account-file.json"
+# GOOGLE_APPLICATION_CREDENTIALS="/home/lego1st/Documents/Contests/VPBank18/SpeechToText/service-account-file.json"
 
 def initEnv():
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/lego1st/Documents/Contests/VPBank18/SpeechToText/service-account-file.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./service-account-file.json"
     client = speech.SpeechClient()
     return client
 
