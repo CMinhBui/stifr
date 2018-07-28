@@ -76,10 +76,10 @@ class Registration:
 		return out, is_done
 
 if __name__ == '__main__':
+	pass
 	# session = Session()
 	# sound_handler = SoundHandeler()
 	# ner = NerDetect()
 	# regist = Registration(sound_handler, ner, questions, tags, session)
 	# out = regist.process()
 	# print(out)
-
