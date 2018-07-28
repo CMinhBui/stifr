@@ -19,6 +19,7 @@ class SoundHandler:
         self.stream_out = None
         self.client = AudioRecog.initEnv()
         self.is_speech_start = False
+        self.continuos_speech_count = 0
     
     def _callback(self, in_data, frame_count, time_info, status):
         if(self.is_recording):
@@ -26,10 +27,16 @@ class SoundHandler:
             print(self.silent_count)
             try:
                 if(self.vad.is_speech(in_data, RATE)):
-                    self.silent_count = 0
-                    self.is_speech_start = True
-                elif(self.is_speech_start):
-                    self.silent_count += 1
+                    self.continuos_speech_count += 1
+                    if self.continuos_speech_count > 10:
+                        self.silent_count = 0
+                else:
+                    if self.continuos_speech_count > 15:
+                        self.is_speech_start = True
+                    self.continuos_speech_count = 0
+                    if self.is_speech_start:
+                        self.silent_count += 1
+                        
 
             except:
                 print(in_data)
