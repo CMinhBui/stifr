@@ -63,14 +63,20 @@ class Registration:
 
 	def process(self):
 		self.sound_handler.play_sound("regist_card.wav")
-		text = self.sound_handler.recognize()
+		text = self.sound_handler.recognize().lower()
 		
 		is_done = False
 		out = None
 		
-		if ('tín dụng' in text) or ('ghi nợ' in text):
+		if ('tín dụng' in text) or ('ghi nợ' in text) or ('credit' in text) or ('debit' in text):
 			out, is_done = self.fill_form(text, self.questions, self.tags)
 		else:
+			self.sound_handler.play_sound("reask_intent.wav")
+			text = self.sound_handler.recognize().lower()
+
+			if ('tín dụng' in text) or ('ghi nợ' in text) or ('credit' in text) or ('debit' in text):
+				out, is_done = self.fill_form(text, self.questions, self.tags)
+			
 			is_done = self.session.process_unknown()
 		
 		return out, is_done

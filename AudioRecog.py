@@ -3,11 +3,13 @@ from google.cloud.speech import enums
 from google.cloud.speech import types
 import os
 import io
+import wave
 
 # GOOGLE_APPLICATION_CREDENTIALS="/home/lego1st/Documents/Contests/VPBank18/SpeechToText/service-account-file.json"
 
 def initEnv():
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./service-account-file.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./minh-service-account.json"
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./service-account-file.json"
     client = speech.SpeechClient()
     return client
 
@@ -23,11 +25,25 @@ def recognize(client, data):
             sample_rate_hertz=16000,\
             language_code="vi-VN")
 
-    response = client.recognize(config, audio)
     transcripts = []
-    for result in response.results:
-        transcripts.append(result.alternatives[0].transcript)
-        print(u"Transcript: {}".format(result.alternatives[0].transcript))
+
+    try:
+        response = client.recognize(config, audio)
+        for result in response.results:
+            transcripts.append(result.alternatives[0].transcript)
+            print(u"Transcript: {}".format(result.alternatives[0].transcript))
+
+    except:
+        print("Error")
+        with wave.open('data.wav', 'wb') as file:
+            file.setnchannels(1)
+            file.setsampwidth(2)
+            file.setframerate(16000)
+
+            file.writeframes(data)
+
+        transcripts = ["nothing"]
+
     return transcripts
 
 if __name__ == "__main__":

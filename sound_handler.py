@@ -96,8 +96,9 @@ class SoundHandler:
             start_at = 0
             while(not self.vad.is_speech(result[start_at], RATE)):
                 start_at += 1
-            end_at = len(result) - 50
-            result = result[start_at-1:end_at]
+            end_at = len(result) - 30
+            result = result[max(start_at-10, 0):end_at]
+            self.play_sound("ping.wav")
 
         result = b''.join(result)
         return result
@@ -129,5 +130,5 @@ if __name__ == "__main__":
     # transcripts = AudioRecog.recognize(tmp.client, data)
     # transcripts = map(lambda x: x.strip(), transcripts)
     # print(' '.join(transcripts))
-    tmp.play_sound("calling_person.wav")
+    tmp.play_sound("reask_intent.wav")
     tmp.end()

@@ -34,7 +34,14 @@ class Session:
                 break
             
             else:
-                is_done = self.process_unknown()
+                self.sound_handler.play_sound("reask_intent.wav")
+                text = self.sound_handler.recognize()
+                intent = self.intent_classifier.classify("text")
+
+                if intent != 'unknown':
+                    continue
+                else:
+                    is_done = self.process_unknown()
 
             if(is_done):
                 break
@@ -49,7 +56,7 @@ class Session:
         if(not self.database.has_phone_num(self.phone_num)):
             self.sound_handler.play_sound("num_not_exist.wav")
         elif not self.loggin_state:
-            self.loggin()
+            self.login2()
 
         if self.loggin_state:
             #if logged in, ask what card user need to lock
@@ -58,8 +65,15 @@ class Session:
             
             if "tín dụng" in response or "credit" in response or "ghi nợ" in response or "debit" in response or "atm" in response:
                 self.sound_handler.play_sound("lock_success.wav")
-            else:                
-                is_done = self.process_unknown()
+            else:
+                self.sound_handler.play_sound("reask_intent.wav")
+                text = self.sound_handler.recognize()
+                response = text.lower()
+
+                if "tín dụng" in response or "credit" in response or "ghi nợ" in response or "debit" in response or "atm" in response:
+                    self.sound_handler.play_sound("lock_success.wav")
+                else:
+                    is_done = self.process_unknown()
 
         return is_done
 
@@ -67,7 +81,7 @@ class Session:
         if(not self.database.has_phone_num(self.phone_num)):
             self.sound_handler.play_sound("num_not_exist.wav")
         elif not self.loggin_state:
-            self.loggin()
+            self.login2()
 
         if self.loggin_state:
             self.sound_handler.play_sound("credit_due.wav")
@@ -109,12 +123,28 @@ class Session:
         self.sound_handler.play_sound("voice_verify.wav")
         audio_data = self.sound_handler.start_record()
         
-        # result = self.verifier.verify(self.phone_num, audio_data)
-        result = True
+        result = self.verifier.verify(self.phone_num, audio_data)
+        print(result)
+        # result = True
         if result:
             self.loggin_state = True
         else:
-            self.sound_handler.play_sound("not_success.wav")
+            self.sound_handler.play_sound("false_verify.wav")
+
+    def login2(self):
+        self.sound_handler.play_sound("verify_idcard.wav")
+        text = self.sound_handler.recognize()
+        ner = NerDetect()
+        idcard = ner.request_ner(text, 'NUM')[0]
+        if idcard != '001097001913':
+            self.sound_handler.play_sound("question_false.wav")
+        else:
+            self.sound_handler.play_sound("question_verify.wav")
+            text = self.sound_handler.recognize()
+            if "lê lợi" in text.lower():
+                self.loggin_state = True
+            else:
+                self.sound_handler.play_sound("question_false.wav")
 
     def ask_again(self):
         self.sound_handler.play_sound("ask_again.wav")
